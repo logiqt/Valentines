@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Will you be my Valentine?</title>
+  <style>
+    /* RETRO ARCADE STYLE – FULLY RESPONSIVE (mobile + PC) */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges; 
+    }
+
+    body {
+      background: #0c1a2b;
+      font-family: 'Press Start 2P', 'Courier New', monospace, 'VT323';
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border: 4px solid #3a5a7a;
+      box-shadow: inset 0 0 0 2px #0f1f2f, inset 0 0 0 5px #1e3347;
+      background-image: repeating-linear-gradient(0deg, rgba(40, 70, 100, 0.3) 0px, rgba(20, 40, 60, 0.3) 4px, transparent 4px, transparent 8px);
+      padding: 16px 8px;
+    }
+
+    /* CRT scanline (lighter for mobile) */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.06) 0px, rgba(0, 255, 0, 0.02) 2px, transparent 3px, transparent 5px);
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* main cartridge – fluid sizing */
+    .valentine-cartridge {
+      background: #3a2c4a;
+      padding: clamp(1.2rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2rem);
+      border: 4px solid #ffb7c5;
+      box-shadow: 8px 8px 0 #1e1428, 0 0 0 4px #ffdae0, 0 0 0 8px #2d1f36;
+      text-align: center;
+      max-width: 780px;
+      width: 100%;
+      z-index: 30;
+      position: relative;
+    }
+
+    /* responsive stripe */
+    .valentine-cartridge::before {
+      content: "■■■■■■■■■■■■■■■■■■■■";
+      position: absolute;
+      bottom: -14px;
+      left: 0;
+      width: 100%;
+      color: #f5a3b9;
+      font-size: clamp(8px, 2vw, 12px);
+      letter-spacing: clamp(4px, 1.5vw, 8px);
+      text-shadow: 2px 2px 0 #631a2c;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* title scaling */
+    .game-title {
+      font-size: clamp(1.2rem, 5vw, 2rem);
+      color: #ffe75e;
+      text-shadow: 4px 4px 0 #b43e5a, 6px 6px 0 #1e1428;
+      margin-bottom: clamp(1rem, 3vh, 1.8rem);
+      letter-spacing: 2px;
+      word-break: break-word;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    /* question block */
+    .pixel-question {
+      background: #fed9e5;
+      border: 4px solid #fff1f3;
+      outline: 3px solid #a6344e;
+      padding: clamp(1rem, 3vw, 1.8rem) 0.5rem;
+      margin: 0.8rem 0 1.5rem;
+      box-shadow: inset 0 -3px 0 #ba7585, inset 0 3px 0 #fff9fb;
+    }
+
+    .question-text {
+      font-size: clamp(1rem, 4vw, 1.7rem);
+      color: #3d0b1d;
+      text-shadow: 2px 2px 0 #ffb6c9;
+      line-height: 1.5;
+      text-transform: uppercase;
+      word-spacing: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .question-text::before {
+      content: "►";
+      color: #c64f6b;
+      font-size: 1.8em;
+    }
+
+    .question-text::after {
+      content: "◄";
+      color: #c64f6b;
+      font-size: 1.8em;
+    }
+
+    /* button panel – responsive gap */
+    .button-console {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(1.5rem, 8vw, 4rem);
+      margin: 1.8rem 0 0.8rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    /* buttons – fluid size */
+    .btn {
+      border: 0;
+      font-size: clamp(1.5rem, 6vw, 2.3rem);
+      font-weight: bold;
+      padding: clamp(0.8rem, 2.5vw, 1.3rem) clamp(1.2rem, 5vw, 2.8rem);
+      font-family: 'Press Start 2P', 'VT323', monospace;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #fff9e6;
+      box-shadow: 0 10px 0 #4a1a2a, 0 12px 16px #0b0b1f;
+      border-bottom: 3px solid #ffd0d9;
+      border-right: 3px solid #ffc0cb;
+      border-left: 3px solid #ffdce6;
+      border-top: 3px solid #fff9fb;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.05s, box-shadow 0.05s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-yes {
+      background: #f15a6e;
+      text-shadow: 3px 3px 0 #631a2c;
+    }
+
+    .btn-no {
+      background: #b7455a;
+      text-shadow: 3px 3px 0 #4f1424;
+      box-shadow: 0 10px 0 #3a1220, 0 12px 16px #0b0b1f;
+    }
+
+    /* runaway state – responsive */
+    .btn-no-runaway {
+      position: fixed !important;
+      transition: left 0.06s steps(6), top 0.06s steps(6);
+      z-index: 999;
+      box-shadow: 0 7px 0 #3a1220, 0 10px 12px #070111 !important;
+    }
+
+    .btn:active {
+      transform: translateY(8px);
+      box-shadow: 0 2px 0 #4a1a2a, 0 6px 12px #0b0b1f;
+    }
+
+    /* victory message – fully responsive */
+    .win-screen {
+      margin-top: clamp(1.5rem, 4vh, 2.8rem);
+      padding: clamp(1rem, 3vw, 1.8rem) clamp(1rem, 4vw, 2rem);
+      background: #1e1428;
+      border: 6px solid #ffb0c3;
+      outline: 4px solid #a5344b;
+      color: #fbe852;
+      font-size: clamp(1.2rem, 4.5vw, 1.9rem);
+      font-family: 'Press Start 2P', monospace;
+      text-shadow: 3px 3px 0 #ad3a53;
+      letter-spacing: 2px;
+      box-shadow: inset 0 -4px 0 #331c24, inset 0 4px 0 #ffdae0;
+      display: inline-block;
+      width: fit-content;
+      max-width: 95%;
+      line-height: 1.7;
+    }
+
+    /* date row – uniform spacing, mobile-optimized */
+    .date-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(0.8rem, 3vw, 2rem);
+      margin: 1.2rem 0 0.2rem;
+      font-size: clamp(1.2rem, 4vw, 1.9rem);
+      line-height: 1.8;
+      flex-wrap: wrap;
+      white-space: nowrap;
+    }
+
+    /* for very small screens, allow wrap with min spacing */
+    @media (max-width: 450px) {
+      .date-row {
+        gap: 0.7rem;
+        white-space: normal;
+      }
+      .question-text::before, .question-text::after {
+        display: none; /* cleaner on very tiny */
+      }
+      .valentine-cartridge::before {
+        content: "■■■■■■■■■■■■";
+      }
+    }
+
+    .strike {
+      text-decoration: line-through;
+      text-decoration-color: #ff4d6d;
+      text-decoration-thickness: 4px;
+      color: #ffb0c3;
+      text-shadow: 2px 2px 0 #631a2c;
+    }
+
+    .arrow {
+      color: #ffe75e;
+      text-shadow: 2px 2px 0 #b43e5a;
+    }
+
+    .new-date-box {
+      color: #7eff7e;
+      text-shadow: 2px 2px 0 #1e5a1e;
+    }
+
+    .hide {
+      display: none !important;
+    }
+
+    /* static hearts – responsive */
+    .pixel-heart-deco {
+      position: fixed;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: #ff6f8f;
+      text-shadow: 3px 3px 0 #57001a;
+      pointer-events: none;
+      z-index: 10;
+      filter: drop-shadow(3px 3px 0 #511d2b);
+    }
+
+    .heart1 { top: 3%; left: 2%; }
+    .heart2 { bottom: 3%; right: 2%; transform: rotate(-8deg); }
+    .heart3 { top: 15%; right: 5%; }
+    .heart4 { bottom: 10%; left: 3%; }
+
+    /* floor stays at bottom */
+    .floor-grid {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: clamp(16px, 4vw, 32px);
+      background: repeating-linear-gradient(90deg, #342a44 0px, #342a44 16px, #4c3a5a 16px, #4c3a5a 32px);
+      border-top: 4px solid #ffb7c5;
+      z-index: 40;
+      box-shadow: 0 -5px 0 #1b1222;
+    }
+
+    .btn:hover {
+      filter: brightness(1.15);
+    }
+
+    /* disable all animations on victory message */
+    .win-screen, .win-screen * {
+      animation: none !important;
+    }
+
+    /* ensure no overflow */
+    html, body {
+      overflow-x: hidden;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- static hearts (no balloons) -->
+  <div class="pixel-heart-deco heart1">❤️</div>
+  <div class="pixel-heart-deco heart2">❤️</div>
+  <div class="pixel-heart-deco heart3">❤️</div>
+  <div class="pixel-heart-deco heart4">❤️</div>
+
+  <div class="floor-grid"></div>
+
+  <!-- MAIN CARTRIDGE -->
+  <div class="valentine-cartridge">
+    <div class="game-title">
+      WILL YOU BE MY VALENTINE?
+    </div>
+
+    <div class="pixel-question">
+      <div class="question-text">
+        YES or NO ?
+      </div>
+    </div>
+
+    <div class="button-console" id="buttonConsole">
+      <button class="btn btn-yes" id="yesBtn">YES</button>
+      <button class="btn btn-no" id="noBtn">NO</button>
+    </div>
+
+    <!-- VICTORY MESSAGE with uniform, spaced dates -->
+    <div id="victoryMessage" class="win-screen hide">
+      ═════════════════════<br>
+      ❤️ YOU COULDN'T SAY NO! ❤️<br>
+      
+      <div class="date-row">
+        <span class="strike">FEB 14</span>
+        <span class="arrow">→</span>
+        <span class="new-date-box">MAR 24</span>
+      </div>
+      
+      ═════════════════════
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const winMsg = document.getElementById('victoryMessage');
+
+      let gameOver = false;
+
+      // ---------- RUNAWAY FUNCTION (optimized for touch + mouse) ----------
+      function runaway(e) {
+        if (gameOver) return;
+
+        // Get coordinates (mouse or touch)
+        let clientX, clientY;
+        if (e.touches) {
+          if (e.touches.length === 0) return;
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+          e.preventDefault(); // prevent scroll while dodging
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+
+        // Get NO button position and size
+        const rect = noBtn.getBoundingClientRect();
+        if (rect.width === 0) return; // button hidden
+
+        const btnCenterX = rect.left + rect.width / 2;
+        const btnCenterY = rect.top + rect.height / 2;
+
+        // Distance from pointer to button center
+        const dist = Math.hypot(clientX - btnCenterX, clientY - btnCenterY);
+
+        // If too close – jump away (threshold smaller on mobile for better play)
+        const threshold = window.innerWidth < 600 ? 150 : 210;
+        if (dist < threshold) {
+          // Direction opposite to pointer + randomness
+          let moveX = (btnCenterX - clientX) * 0.7;
+          let moveY = (btnCenterY - clientY) * 0.7;
+
+          // Add pixel chaos
+          moveX += (Math.floor(Math.random() * 60) - 30);
+          moveY += (Math.floor(Math.random() * 60) - 30);
+
+          let newLeft = rect.left + moveX;
+          let newTop = rect.top + moveY;
+
+          // Keep inside viewport with padding
+          const pad = 12;
+          const maxX = window.innerWidth - rect.width - pad;
+          const minX = pad;
+          const maxY = window.innerHeight - rect.height - pad;
+          const minY = pad;
+
+          newLeft = Math.min(Math.max(newLeft, minX), maxX);
+          newTop = Math.min(Math.max(newTop, minY), maxY);
+
+          // Apply fixed positioning
+          noBtn.style.position = 'fixed';
+          noBtn.style.left = newLeft + 'px';
+          noBtn.style.top = newTop + 'px';
+          noBtn.style.right = 'auto';
+          noBtn.style.bottom = 'auto';
+
+          noBtn.classList.add('btn-no-runaway');
+        }
+      }
+
+      // ---------- EVENT LISTENERS (optimized) ----------
+      document.addEventListener('mousemove', runaway);
+      document.addEventListener('touchmove', runaway, { passive: false });
+
+      // Immediate dodge on touch start
+      noBtn.addEventListener('touchstart', function(e) {
+        if (gameOver) return;
+        e.preventDefault();
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          runaway({ touches: [touch] });
+        }
+      }, { passive: false });
+
+      // If somehow NO gets clicked, jump far away
+      noBtn.addEventListener('click', function(e) {
+        if (gameOver) return;
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const rect = noBtn.getBoundingClientRect();
+        let newLeft = rect.left + (Math.random() * 300 - 150);
+        let newTop = rect.top + (Math.random() * 300 - 150);
+        const pad = 12;
+        const maxX = window.innerWidth - rect.width - pad;
+        const minX = pad;
+        const maxY = window.innerHeight - rect.height - pad;
+        const minY = pad;
+        newLeft = Math.min(Math.max(newLeft, minX), maxX);
+        newTop = Math.min(Math.max(newTop, minY), maxY);
+
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = newLeft + 'px';
+        noBtn.style.top = newTop + 'px';
+        noBtn.classList.add('btn-no-runaway');
+      });
+
+      // ---------- YES BUTTON: VICTORY ----------
+      yesBtn.addEventListener('click', function(e) {
+        if (gameOver) return;
+
+        gameOver = true;
+
+        // Hide NO button
+        noBtn.style.display = 'none';
+        
+        // Disable YES button
+        yesBtn.disabled = true;
+        yesBtn.style.opacity = '0.9';
+        yesBtn.style.transform = 'translateY(8px)';
+        yesBtn.style.boxShadow = '0 2px 0 #4a1a2a';
+
+        // Show victory message
+        winMsg.classList.remove('hide');
+
+        // Remove listeners to stop runaway
+        document.removeEventListener('mousemove', runaway);
+        document.removeEventListener('touchmove', runaway);
+
+        // Slight background change
+        document.body.style.backgroundColor = '#281c2c';
+      });
+
+      // ---------- RESIZE HANDLER (keep NO button in bounds) ----------
+      window.addEventListener('resize', function() {
+        if (gameOver) return;
+        if (noBtn.style.position === 'fixed') {
+          const rect = noBtn.getBoundingClientRect();
+          let left = parseFloat(noBtn.style.left) || rect.left;
+          let top = parseFloat(noBtn.style.top) || rect.top;
+          const pad = 12;
+          const maxX = window.innerWidth - rect.width - pad;
+          const minX = pad;
+          const maxY = window.innerHeight - rect.height - pad;
+          const minY = pad;
+          left = Math.min(Math.max(left, minX), maxX);
+          top = Math.min(Math.max(top, minY), maxY);
+          noBtn.style.left = left + 'px';
+          noBtn.style.top = top + 'px';
+        }
+      });
+
+      // ---------- PAGE LOAD: RESET TO NATURAL FLOW ----------
+      window.addEventListener('load', function() {
+        noBtn.style.position = '';
+        noBtn.style.left = '';
+        noBtn.style.top = '';
+        noBtn.style.display = 'inline-block';
+        noBtn.classList.remove('btn-no-runaway');
+        gameOver = false;
+        winMsg.classList.add('hide');
+        yesBtn.disabled = false;
+        yesBtn.style.opacity = '1';
+        yesBtn.style.transform = '';
+        yesBtn.style.boxShadow = '';
+      });
+
+      // Prevent drag on buttons
+      noBtn.addEventListener('dragstart', (e) => e.preventDefault());
+      yesBtn.addEventListener('dragstart', (e) => e.preventDefault());
+
+    })();
+  </script>
+
+  <style>
+    /* ensure victory message no animations */
+    .win-screen, .win-screen * {
+      animation: none !important;
+    }
+    /* fine tune for landscape */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .valentine-cartridge {
+        padding: 0.8rem;
+      }
+      .game-title {
+        margin-bottom: 0.5rem;
+      }
+      .pixel-question {
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+      }
+    }
+  </style>
+</body>
+</html>
