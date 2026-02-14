@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Will you be my Valentine?</title>
+  <style>
+    /* RETRO ARCADE STYLE – 8/16bit PIXEL FLAIR */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges; 
+      image-rendering: -moz-crisp-edges;
+    }
+
+    body {
+      background: #0c1a2b;
+      font-family: 'Press Start 2P', 'Courier New', monospace, 'VT323', 'Silkscreen';
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 8px solid #3a5a7a;
+      box-shadow: inset 0 0 0 4px #0f1f2f, inset 0 0 0 8px #1e3347;
+      background-image: repeating-linear-gradient(0deg, rgba(40, 70, 100, 0.3) 0px, rgba(20, 40, 60, 0.3) 4px, transparent 4px, transparent 8px);
+    }
+
+    /* CRT scanline effect */
+    body::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 255, 0, 0.02) 2px, transparent 3px, transparent 5px);
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* main game card – pixel chunky */
+    .valentine-cartridge {
+      background: #3a2c4a;
+      padding: 2.5rem 2rem;
+      border: 6px solid #ffb7c5;
+      box-shadow: 16px 16px 0 #1e1428, 0 0 0 6px #ffdae0, 0 0 0 12px #2d1f36;
+      text-align: center;
+      max-width: 750px;
+      width: 90%;
+      z-index: 30;
+      position: relative;
+      image-rendering: pixelated;
+    }
+
+    /* 8-bit stripe */
+    .valentine-cartridge::before {
+      content: "■■■■■■■■■■■■■■■■■■■■";
+      position: absolute;
+      bottom: -18px;
+      left: 0;
+      width: 100%;
+      color: #f5a3b9;
+      font-size: 12px;
+      letter-spacing: 8px;
+      text-shadow: 2px 2px 0 #631a2c;
+    }
+
+    /* pixel title */
+    .game-title {
+      font-size: 1.9rem;
+      color: #ffe75e;
+      text-shadow: 6px 6px 0 #b43e5a, 8px 8px 0 #1e1428;
+      margin-bottom: 1.5rem;
+      letter-spacing: 4px;
+      word-break: break-word;
+      font-family: 'Press Start 2P', 'VT323', monospace;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    /* pixel question block */
+    .pixel-question {
+      background: #fed9e5;
+      border: 6px solid #fff1f3;
+      outline: 4px solid #a6344e;
+      padding: 1.8rem 1rem;
+      margin: 1rem 0 2rem;
+      box-shadow: inset 0 -4px 0 #ba7585, inset 0 4px 0 #fff9fb;
+    }
+
+    .question-text {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #3d0b1d;
+      text-shadow: 3px 3px 0 #ffb6c9;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      line-height: 1.6;
+      text-transform: uppercase;
+      word-spacing: 8px;
+    }
+
+    .question-text::before {
+      content: "►";
+      margin-right: 12px;
+      color: #c64f6b;
+      font-size: 2rem;
+    }
+
+    .question-text::after {
+      content: "◄";
+      margin-left: 12px;
+      color: #c64f6b;
+      font-size: 2rem;
+    }
+
+    /* retro button panel */
+    .button-console {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4rem;
+      margin-top: 2.2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    /* pixel style buttons */
+    .btn {
+      border: 0;
+      font-size: 2.2rem;
+      font-weight: bold;
+      padding: 1.2rem 2.8rem;
+      font-family: 'Press Start 2P', 'VT323', monospace;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      color: #fff9e6;
+      box-shadow: 0 14px 0 #4a1a2a, 0 18px 18px #0b0b1f;
+      border-bottom: 4px solid #ffd0d9;
+      border-right: 4px solid #ffc0cb;
+      border-left: 4px solid #ffdce6;
+      border-top: 4px solid #fff9fb;
+      image-rendering: pixelated;
+      transition: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .btn-yes {
+      background: #f15a6e;
+      text-shadow: 3px 3px 0 #631a2c, 5px 5px 0 #1e1428;
+    }
+
+    .btn-no {
+      background: #b7455a;
+      text-shadow: 3px 3px 0 #4f1424, 5px 5px 0 #1e1428;
+      box-shadow: 0 14px 0 #3a1220, 0 18px 18px #0b0b1f;
+    }
+
+    .btn-no-runaway {
+      position: fixed !important;
+      transition: left 0.06s steps(6), top 0.06s steps(6);
+      z-index: 999;
+      box-shadow: 0 10px 0 #3a1220, 0 14px 14px #070111 !important;
+    }
+
+    .btn:active {
+      transform: translateY(10px);
+      box-shadow: 0 4px 0 #4a1a2a, 0 8px 18px #0b0b1f;
+    }
+
+    /* 8-bit victory message */
+    .win-screen {
+      margin-top: 2.5rem;
+      padding: 1.5rem 1.8rem;
+      background: #1e1428;
+      border: 8px solid #ffb0c3;
+      outline: 6px solid #a5344b;
+      color: #fbe852;
+      font-size: 1.8rem;
+      font-family: 'Press Start 2P', monospace;
+      text-shadow: 4px 4px 0 #ad3a53;
+      letter-spacing: 3px;
+      box-shadow: inset 0 -6px 0 #331c24, inset 0 6px 0 #ffdae0;
+      display: inline-block;
+      line-height: 1.8;
+    }
+
+    .hide {
+      display: none !important;
+    }
+
+    /* retro hearts decoration */
+    .pixel-heart-deco {
+      position: absolute;
+      font-size: 2.4rem;
+      color: #ff6f8f;
+      text-shadow: 3px 3px 0 #57001a;
+      pointer-events: none;
+      z-index: 10;
+      image-rendering: pixelated;
+      filter: drop-shadow(4px 4px 0 #511d2b);
+    }
+
+    .heart1 { top: 5%; left: 3%; }
+    .heart2 { bottom: 8%; right: 2%; transform: rotate(-8deg); }
+    .heart3 { top: 20%; right: 10%; font-size: 3rem; }
+    .heart4 { bottom: 15%; left: 5%; }
+
+    /* pixel grid floor */
+    .floor-grid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 32px;
+      background: repeating-linear-gradient(90deg, #342a44 0px, #342a44 16px, #4c3a5a 16px, #4c3a5a 32px);
+      border-top: 6px solid #ffb7c5;
+      z-index: 40;
+      box-shadow: 0 -8px 0 #1b1222;
+    }
+
+    .btn:hover {
+      filter: brightness(1.2);
+    }
+
+    @media (max-width: 600px) {
+      .btn { font-size: 1.6rem; padding: 0.9rem 1.5rem; }
+      .question-text { font-size: 1.2rem; }
+      .game-title { font-size: 1.4rem; }
+    }
+
+    /* Strikethrough style – more uniform and spaced out */
+    .date-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin: 1.5rem 0 0.5rem;
+      font-size: 1.8rem;
+      line-height: 2.4rem;
+      flex-wrap: wrap;
+    }
+
+    .strike-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .strike {
+      text-decoration: line-through;
+      text-decoration-color: #ff4d6d;
+      text-decoration-thickness: 5px;
+      color: #ffb0c3;
+      text-shadow: 3px 3px 0 #631a2c;
+    }
+
+    .arrow {
+      color: #ffe75e;
+      text-shadow: 3px 3px 0 #b43e5a;
+      margin: 0 0.5rem;
+    }
+
+    .new-date-box {
+      color: #7eff7e;
+      text-shadow: 3px 3px 0 #1e5a1e;
+    }
+
+    /* no blinking on any text inside win-screen */
+    .win-screen * {
+      animation: none !important;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- static retro hearts -->
+  <div class="pixel-heart-deco heart1">❤️</div>
+  <div class="pixel-heart-deco heart2">❤️</div>
+  <div class="pixel-heart-deco heart3">❤️</div>
+  <div class="pixel-heart-deco heart4">❤️</div>
+
+  <div class="floor-grid"></div>
+
+  <!-- MAIN GAME CARTRIDGE -->
+  <div class="valentine-cartridge">
+    <div class="game-title">
+      WILL YOU BE MY VALENTINE?
+    </div>
+
+    <div class="pixel-question">
+      <div class="question-text">
+        YES or NO ?
+      </div>
+    </div>
+
+    <div class="button-console" id="buttonConsole">
+      <button class="btn btn-yes" id="yesBtn">YES</button>
+      <button class="btn btn-no" id="noBtn">NO</button>
+    </div>
+
+    <!-- VICTORY MESSAGE with uniform, spaced-out dates -->
+    <div id="victoryMessage" class="win-screen hide">
+      ═════════════════════<br>
+      ❤️ YOU COULDN'T SAY NO! ❤️<br>
+      
+      <div class="date-row">
+        <span class="strike">FEB 14</span>
+        <span class="arrow">→</span>
+        <span class="new-date-box">MAR 24</span>
+      </div>
+      
+      ═════════════════════
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const winMsg = document.getElementById('victoryMessage');
+
+      let gameOver = false;
+
+      function runaway(e) {
+        if (gameOver) return;
+
+        let clientX, clientY;
+        if (e.touches) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+          e.preventDefault();
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+
+        const rect = noBtn.getBoundingClientRect();
+        const btnCenterX = rect.left + rect.width / 2;
+        const btnCenterY = rect.top + rect.height / 2;
+
+        const dist = Math.sqrt(Math.pow(clientX - btnCenterX, 2) + Math.pow(clientY - btnCenterY, 2));
+
+        if (dist < 210) {
+          let moveX = (btnCenterX - clientX) * 0.8;
+          let moveY = (btnCenterY - clientY) * 0.8;
+
+          moveX += (Math.floor(Math.random() * 70) - 35);
+          moveY += (Math.floor(Math.random() * 70) - 35);
+
+          let newLeft = rect.left + moveX;
+          let newTop = rect.top + moveY;
+
+          const pad = 16;
+          const maxX = window.innerWidth - rect.width - pad;
+          const minX = pad;
+          const maxY = window.innerHeight - rect.height - pad;
+          const minY = pad;
+
+          newLeft = Math.min(Math.max(newLeft, minX), maxX);
+          newTop = Math.min(Math.max(newTop, minY), maxY);
+
+          noBtn.style.position = 'fixed';
+          noBtn.style.left = newLeft + 'px';
+          noBtn.style.top = newTop + 'px';
+          noBtn.style.right = 'auto';
+          noBtn.style.bottom = 'auto';
+
+          noBtn.classList.add('btn-no-runaway');
+        }
+      }
+
+      document.addEventListener('mousemove', runaway);
+      document.addEventListener('touchmove', runaway, { passive: false });
+
+      noBtn.addEventListener('touchstart', function(e) {
+        if (gameOver) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        const fakeEv = { clientX: touch.clientX, clientY: touch.clientY };
+        runaway(fakeEv);
+      }, { passive: false });
+
+      noBtn.addEventListener('click', function(e) {
+        if (gameOver) return;
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const rect = noBtn.getBoundingClientRect();
+        let newLeft = rect.left + (Math.random() * 400 - 200);
+        let newTop = rect.top + (Math.random() * 400 - 200);
+        const pad = 16;
+        const maxX = window.innerWidth - rect.width - pad;
+        const minX = pad;
+        const maxY = window.innerHeight - rect.height - pad;
+        const minY = pad;
+        newLeft = Math.min(Math.max(newLeft, minX), maxX);
+        newTop = Math.min(Math.max(newTop, minY), maxY);
+
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = newLeft + 'px';
+        noBtn.style.top = newTop + 'px';
+        noBtn.classList.add('btn-no-runaway');
+      });
+
+      yesBtn.addEventListener('click', function(e) {
+        if (gameOver) return;
+
+        gameOver = true;
+
+        noBtn.style.display = 'none';
+        
+        yesBtn.disabled = true;
+        yesBtn.style.opacity = '0.9';
+        yesBtn.style.transform = 'translateY(10px)';
+        yesBtn.style.boxShadow = '0 4px 0 #4a1a2a';
+
+        winMsg.classList.remove('hide');
+
+        document.removeEventListener('mousemove', runaway);
+        document.removeEventListener('touchmove', runaway);
+
+        document.body.style.backgroundColor = '#281c2c';
+      });
+
+      window.addEventListener('resize', function() {
+        if (gameOver) return;
+        if (noBtn.style.position === 'fixed') {
+          const rect = noBtn.getBoundingClientRect();
+          let left = parseFloat(noBtn.style.left) || rect.left;
+          let top = parseFloat(noBtn.style.top) || rect.top;
+          const pad = 16;
+          const maxX = window.innerWidth - rect.width - pad;
+          const minX = pad;
+          const maxY = window.innerHeight - rect.height - pad;
+          const minY = pad;
+          left = Math.min(Math.max(left, minX), maxX);
+          top = Math.min(Math.max(top, minY), maxY);
+          noBtn.style.left = left + 'px';
+          noBtn.style.top = top + 'px';
+        }
+      });
+
+      window.addEventListener('load', function() {
+        noBtn.style.position = '';
+        noBtn.style.left = '';
+        noBtn.style.top = '';
+        noBtn.style.display = 'inline-block';
+        noBtn.classList.remove('btn-no-runaway');
+        gameOver = false;
+        winMsg.classList.add('hide');
+        yesBtn.disabled = false;
+        yesBtn.style.opacity = '1';
+        yesBtn.style.transform = '';
+        yesBtn.style.boxShadow = '';
+      });
+
+      noBtn.addEventListener('dragstart', (e) => e.preventDefault());
+      yesBtn.addEventListener('dragstart', (e) => e.preventDefault());
+
+    })();
+  </script>
+
+  <style>
+    .win-screen {
+      background: #2a1c32;
+      border-style: solid;
+      border-color: #f7c5d1 #d97f94 #d97f94 #f7c5d1;
+      border-width: 8px;
+    }
+    .pixel-question {
+      image-rendering: crisp-edges;
+    }
+    body {
+      border-color: #4b3a5c;
+    }
+    /* ensure no animations on victory message */
+    .win-screen, .win-screen * {
+      animation: none !important;
+    }
+  </style>
+</body>
+</html>
